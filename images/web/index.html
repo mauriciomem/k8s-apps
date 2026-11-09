@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CKS lab - 3-tier app</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; }
+    code { background: #eee; padding: 2px 4px; }
+    .err { color: #b00; }
+  </style>
+</head>
+<body>
+  <h1 id="title">CKS lab app</h1>
+  <p>Served by the frontend. Data comes from <code>/api/</code> (backend) which reads from the database.</p>
+  <p>Backend pod: <code id="pod">?</code></p>
+
+  <h2>Items</h2>
+  <ul id="items"></ul>
+  <form id="add">
+    <input id="name" placeholder="New item" required>
+    <button>Add</button>
+  </form>
+  <p id="msg" class="err"></p>
+
+  <script>
+    async function load() {
+      try {
+        const info = await (await fetch('/api/info')).json();
+        document.getElementById('title').textContent = info.app;
+        document.getElementById('pod').textContent = info.hostname;
+
+        const res = await fetch('/api/items');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || res.status);
+        const ul = document.getElementById('items');
+        ul.innerHTML = '';
+        data.items.forEach(i => {
+          const li = document.createElement('li');
+          li.textContent = i.name;
+          ul.appendChild(li);
+        });
+        document.getElementById('msg').textContent = '';
+      } catch (e) {
+        document.getElementById('msg').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    document.getElementById('add').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const name = document.getElementById('name').value;
+      await fetch('/api/items', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name})
+      });
+      document.getElementById('name').value = '';
+      load();
+    });
+
+    load();
+  </script>
+</body>
+</html>

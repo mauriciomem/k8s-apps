@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: data
+  labels:
+    app: data
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: data
+        tier: database
+    spec:
+      containers:
+        - name: database
+          image: cks-lab/db:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "app"
+            - name: POSTGRES_PASSWORD
+              value: "data-pass-789"
+            - name: POSTGRES_DB
+              value: "app"
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "app", "-d", "app"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "app", "-d", "app"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: data
+  labels:
+    app: data
+    tier: database
+spec:
+  type: ClusterIP
+  selector:
+    app: data
+    tier: database
+  ports:
+    - port: 5432
+      targetPort: 5432
