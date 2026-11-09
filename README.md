@@ -2,10 +2,8 @@
 
 A small set of example apps for kubernetes.
 
-The apps are intentionally plain. Each one is only a **Deployment** (which
-creates the Pods) and a **Service**, in its own **Namespace**. There are no
-NetworkPolicies, Secrets, security settings, RBAC or resource limits.
-Adding those is the exercise.
+The apps are intentionally plain. Each one is only a **Deployment** 
+and a **Service**, in its own **Namespace**.
 
 ## What you get
 
