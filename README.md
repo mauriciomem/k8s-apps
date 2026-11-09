@@ -19,25 +19,6 @@ Five namespaces, each with a different kind of workload:
 | `quotes-api` | A small API that returns fixed data (no database)          |
 | `data`       | A PostgreSQL database by itself                            |
 
-```mermaid
-flowchart LR
-  subgraph shop
-    sf[frontend] --> sb[backend] --> sd[(database)]
-  end
-  subgraph blog
-    bf[frontend] --> bb[backend] --> bd[(database)]
-  end
-  subgraph web [website]
-    w[website]
-  end
-  subgraph qapi [quotes-api]
-    q[quotes-api]
-  end
-  subgraph data
-    d[(database)]
-  end
-```
-
 All the frontend and API containers include `curl`, `psql` and `pg_isready`, so
 you can test from inside a pod which connections are allowed.
 
