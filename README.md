@@ -1,4 +1,4 @@
-# CKS lab workloads
+# Kubernetes example workloads
 
 A small set of example apps for kubernetes.
 
